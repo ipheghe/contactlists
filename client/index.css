@@ -1,0 +1,16 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Helvetica', 'Roboto', sans-serif;
+  color: black;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  margin: auto;
+  padding: 0;
+	height: 100px;
+	width: 100%;
+  overflow: scroll;
+}
