@@ -5,7 +5,9 @@ import {
   CREATE_CONTACT_FAILURE,
   GET_ALL_CONTACTS_REQUEST,
   GET_ALL_CONTACTS_SUCCESS,
-  GET_ALL_CONTACTS_FAILURE
+  GET_ALL_CONTACTS_FAILURE,
+  SEARCH_ALL_CONTACTS_SUCCESS,
+  
 } from './constants';
 
 // config
@@ -60,9 +62,9 @@ export const createContact = (payload) => (dispatch) => {
  * @param {array} pages - data contains data to dispatch
  * @returns {object} - an object containing payload
  */
-export const getContactsSuccess = (data) => (
+export const getContactsSuccess = (data, searchAction) => (
   {
-    type: GET_ALL_CONTACTS_SUCCESS,
+    type: searchAction,
     data,
   }
 );
@@ -88,14 +90,11 @@ export const getContactsFailure = (error) => (
  * @returns {function} - disapatch method depending on http response
  */
 export const getAllContacts = (query = null) => (dispatch) => {
-  console.log('ugttttttkkkkkkkkkkkkkkkkmmmmtt')
   dispatch({ type: GET_ALL_CONTACTS_REQUEST });
-  const searchQuery = query ? '?search=query' : '';
+  const searchQuery = query ? `?search=${query}` : '';
+  const searchAction = query ? SEARCH_ALL_CONTACTS_SUCCESS : GET_ALL_CONTACTS_SUCCESS;
   return http.get(`/api/v1/contact${searchQuery}`)
-    .then(response => {
-      console.log(response, '====hdhd')
-      return dispatch(getContactsSuccess(response.data.data))
-    })
+    .then(response => dispatch(getContactsSuccess(response.data.data, searchAction)))
     .catch((error) => {
       const data = {
         errorMessage: error.response ? error.response.statusText : '',

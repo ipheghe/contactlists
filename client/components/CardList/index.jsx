@@ -1,10 +1,10 @@
 import React from 'react';
 import Card from '../Card'
+import './CardList.scss';
 
 const CardList = ({ cards }) => {
-  console.log(cards)
    return (
-     <div>
+     <div className="card__list__container">
        { cards && cards.map(card => (
          <Card
           key={card.id}

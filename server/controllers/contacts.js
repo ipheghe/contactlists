@@ -101,7 +101,6 @@ export default class ContactController {
         $iLike: `%${word}%`
       }
     }));
-    console.log(query, query1)
 
     return Contact
       .findAll({
@@ -122,10 +121,7 @@ export default class ContactController {
             message: 'Sorry!!! No contact matches your search'
           });
         }
-        return res.status(200).send({
-          message: 'Search result retrieved successfully!',
-          contacts,
-        });
+        return handleSuccessMessage(res, 200, contacts, 'Search result retrieved successfully!')
       })
       .catch(error => res.status(500).send({
         error: error.message
@@ -140,7 +136,6 @@ export default class ContactController {
    * @return {object} status message data
    */
   static getAllContacts(req, res) {
-    console.log('===========getall')
     const convertArrayToCSV = (args) => {  
       let result, ctr, keys, columnDelimiter, lineDelimiter, data;
 

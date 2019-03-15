@@ -1,148 +1,137 @@
-// // react imports
-// import React, { Component } from 'react';
+// react imports
+import React, { Component } from 'react';
 
-// // third-party libraries import
-// import { connect } from 'react-redux';
-// import _ from 'lodash';
-// import { CSVLink } from 'react-csv';
+// third-party libraries import
+import { connect } from 'react-redux';
+import _ from 'lodash';
+import { CSVLink } from 'react-csv';
 
-// // styles
-// import './Dashboard.scss';
+// styles
+import './Dashboard.scss';
 
-// // components
-// import CardList from '../../components/CardList';
-// import Form from '../../components/Form';
+// components
+import CardList from '../../components/CardList';
 
-// import { getAllContacts, CreateContact } from '../../actions'
+// actions
+import { getAllContacts } from '../../actions'
 
-// /**
-//  * Container component housing the Single-Page application
-//  *
-//  * @class Dashboard
-//  */
-// export class Dashboard extends Component {
+/**
+ * Container component housing the Single-Page application
+ *
+ * @class Dashboard
+ */
+export class Dashboard extends Component {
 
-//   constructor(props) {
-//     super(props);
+  constructor(props) {
+    super(props);
 
-//     this.state = {
-//       contactData: [],
-//       errorMessage: '',
-//       data: [],
-//       name: '',
-//       pNumbers: '',
-//     };
-//   }
+    this.state = {
+      contactData: [],
+      errorMessage: '',
+      name: '',
+      pNumbers: '',
+      search: '',
+    };
+  }
+
+  componentDidMount() {
+    this.props.getAllContacts();
+  }
+
+  /**
+   * React component life cycle hook
+   *
+   * @memberof Dashboard
+   * @param {object} props - Props
+   * @param {object} state - State
+   * @return {void} - no return
+   */
+  static getDerivedStateFromProps = (props, state) => {
+    const { contacts } = props;
+    const { contactData } = state;
+    if (contacts.search && contacts.search.length > 0 && contactData !== contacts.search) {
+      return {
+        contactData: contacts.search
+      }
+    }
+    if (contacts.data && contacts.data.length > 0 && contactData !== contacts.data) {
+      return {
+        contactData: contacts.data,
+      };
+    }
 
 
-//   componentDidMount() {
-//     this.props.getAllContacts();
-//   }
+    return state;
+  }
 
-//   /**
-//    * React component life cycle hook
-//    *
-//    * @memberof Dashboard
-//    * @param {object} props - Props
-//    * @param {object} state - State
-//    * @return {void} - no return
-//    */
-//   static getDerivedStateFromProps = (props, state) => {
-//     const { contacts } = props;
-//     console.log(contacts, 'pppppp', state, '======kkkkkkkkkk')
-//     const { contactData } = state;
-//     if (contactData !== contacts.data && contacts.data.length > 0) {
-//       return {
-//         contactData: contacts.data,
-//       };
-//     }
+  /**
+   * This method handles number input change event
+   *
+   * @param {event} event - Sythentic event
+   * @return {void}  null
+   */
+  handleChange = event => {
+    event.preventDefault();
+    this.setState({
+      [event.target.name]: event.target.value,
+    });
+  };
 
-//     return state;
-//   }
+  renderContactCards = () => {
+    const { contactData } = this.state;
 
-//   // /**
-//   //  * This method validates input field after submitting
-//   //  *
-//   //  * @return {void}  null
-//   //  */
-//   // validateField = () => {
-//   //   const { name, phoneNumbers } = this.state;
-//   //   if (name === '') {
-//   //    this.setState({ errorMessage: 'Name field cannot be empty '});
-//   //    return false;
-//   //   }
-//   //   if (pNumbers === '') {
-//   //     this.setState({ errorMessage: 'phone numbers field cannot be empty '});
-//   //     return false;
-//   //    }
+    if (contactData && contactData.length < 1) {
+      return (
+        <h3>No Contact Available Yet</h3>
+      )
+    }
 
-//   //   return true;
-//   // };
+    return (
+      <CardList cards={contactData} />
+    );
+  }
 
-//   // /**
-//   //  * This method handles number input change event
-//   //  *
-//   //  * @param {event} event - Sythentic event
-//   //  * @return {void}  null
-//   //  */
-//   // handleChange = event => {
-//   //   event.preventDefault();
-//   //   this.setState({
-//   //     [event.target.name]: event.target.value,
-//   //   });
-//   // };
+  handleSearch = (event) => {
+    event.preventDefault();
+    const { search } = this.state;
 
-//   // /**
-//   //  * This method handles text button Click to generate numbers
-//   //  *
-//   //  * @param {event} event - Sythentic event
-//   //  * @return {void}  null
-//   //  */
-//   // handleButtonClick = event => {
-//   //   event.preventDefault();
-//   //   this.setState(
-//   //     {
-//   //       buttonText: 'Generating Numbers.....',
-//   //     },
-//   //     () => this.updateGeneratedNumbers()
-//   //   );
-//   // };
+    if (search !== '') {
+      this.props.getAllContacts(search);
+    }
+  }
 
-//   renderContactCards = () => {
-//     const { contactData } = this.state;
-//     const { contacts } = this.props
-//     console.log(contactData, '===rege')
+  /**
+   * Renders Dashboard component
+   *
+   * @memberof Dashboard
+   * @returns {JSX} jsx
+   */
+  render() {
+    const { contacts } = this.props;
+    const { search } = this.state;
 
-//     if (contacts.data.length < 1) {
-//       return (
-//         <h3>No Contact Available Yet</h3>
-//       )
-//     }
+    return (
+      <div className="container">
+        <div className="search-container">
+          <form onSubmit={this.handleSearch}>
+            <input
+              type="text"
+              placeholder="Search.."
+              name="search"
+              value={search}
+              onChange={this.handleChange}
+            />
+            <button type="submit">Search</button>
+          </form>
+        </div>
+        {contacts.pending ? (
+          <p>Loading......</p>
+        ) : this.renderContactCards()}
+      </div>
+    );
+  }
+}
 
-//     return (
-//       <CardList cards={contacts.data} />
-//     );
-//   }
+const mapStateToProps = ({ contacts }) => ({ contacts });
 
-//   /**
-//    * Renders Dashboard component
-//    *
-//    * @memberof Dashboard
-//    * @returns {JSX} jsx
-//    */
-//   render() {
-//     const { contacts } = this.props;
-
-//     return (
-//       <div className="container">
-//         {contacts.pending ? (
-//           <p>Loading......</p>
-//         ) : this.renderContactCards()}
-//       </div>
-//     );
-//   }
-// }
-
-// const mapStateToProps = ({ contacts }) => ({ contacts });
-
-// export default connect(mapStateToProps, { getAllContacts, CreateContact })(Dashboard);
+export default connect(mapStateToProps, { getAllContacts })(Dashboard);

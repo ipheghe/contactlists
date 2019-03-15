@@ -6,11 +6,14 @@ import {
   GET_ALL_CONTACTS_REQUEST,
   GET_ALL_CONTACTS_SUCCESS,
   GET_ALL_CONTACTS_FAILURE,
+  SEARCH_ALL_CONTACTS_SUCCESS,
+  
 } from '../actions/constants';
 
 const initialState = {
   contacts: {
     data: [],
+    search: [],
     error: {},
     pending: false,
   }
@@ -37,13 +40,24 @@ const contactReducer = (state = initialState.contacts, action) => {
       error: action.error,
     };
 
-    case GET_ALL_CONTACTS_SUCCESS:
+  case GET_ALL_CONTACTS_SUCCESS:
     return {
       ...state,
       pending: false,
       data: action.data,
       error: {},
+      search: []
     };
+
+  case SEARCH_ALL_CONTACTS_SUCCESS:
+    return {
+      ...state,
+      pending: false,
+      search: action.data,
+      error: {},
+      data: [],
+    };
+
   case GET_ALL_CONTACTS_REQUEST:
     return {
       ...state,

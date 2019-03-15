@@ -1,10 +1,16 @@
 // react imports
 import React, { Component } from 'react';
+import { Router } from "@reach/router";
 import { Provider } from 'react-redux'
 
 // components
 import Dashboard from './containers/Dashboard';
-import store from './store';
+import Form from './containers/Form';
+import Header from './components/Header';
+import Footer from './components/Footer';
+
+// store
+import configureStore from './store';
 
 
 /**
@@ -22,8 +28,13 @@ export default class App extends Component {
    */
   render() {
     return (
-      <Provider store={store}>
-        <Dashboard />
+      <Provider store={configureStore}>
+        <Header />
+        <Router>
+          <Dashboard path="/" />
+          <Form path="/contact" />
+        </Router>
+        <Footer />
       </Provider>
     );
   }

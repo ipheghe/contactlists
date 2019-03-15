@@ -3,9 +3,7 @@ import { Router } from '@reach/router';
 import App from '../App';
 
 const Root = () => (
-  <Router>
-    <App path="/" />
-  </Router>
+    <App />
 );
 
 export default Root;
